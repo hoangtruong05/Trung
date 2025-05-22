@@ -1,145 +1,112 @@
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
 using namespace std;
+#define MAX 100
 
-struct Sinhvien {
-    char hodem[20];
-    char ten[10];
-    char gt[5];
-    float diemtk;
+struct MATHANG {
+    char maHang[50];
+    char tenHang[50];
+    int soLuong;
 };
 
-struct Node {
-    Sinhvien infor;
-    Node *next;
+struct List {
+    int count;
+    MATHANG a[MAX];
 };
 
-typedef Node* TRO;
-
-void nhapsv(Sinhvien &sv) {
-    cout << "Nhap ho dem : "; fflush(stdin); gets(sv.hodem);
-    cout << "Nhap ten : "; fflush(stdin); gets(sv.ten);
-    cout << "Nhap gioi tinh : "; fflush(stdin); gets(sv.gt);
-    cout << "Nhap diem tong ket : "; cin >> sv.diemtk;
+// Hàm nh?p 1 m?t hàng
+void NHAPMATHANG(MATHANG &mh) {
+    cout << "\nNhap ma hang: "; fflush(stdin); gets(mh.maHang);
+    cout << "Nhap ten hang: "; fflush(stdin); gets(mh.tenHang);
+    cout << "Nhap so luong: "; cin >> mh.soLuong;
 }
 
-void nhapdsach(TRO &L) {
-    Sinhvien sv;
-    TRO P, Q = NULL;
-    int i = 0;
-    L = NULL;
+// Hàm nh?p danh sách m?t hàng (ít nh?t 3 ph?n t?)
+void NHAPDANHSACH(List &L) {
+    MATHANG x; L.count = -1;
     do {
-        cout << endl << "Nhap thong tin sinh vien thu " << i + 1 << endl;
-        nhapsv(sv);
-        P = new Node;
-        P->infor = sv;
-        P->next = NULL; // FIXED: gÃ¡n next NULL
-        if (L == NULL) {
-            L = P;
-        } else {
-            Q->next = P;
-        }
-        Q = P;
-        i++;
-    } while (i < 3); // nháº­p 3 sinh viÃªn
+        cout << "\nNhap mat hang thu " << L.count + 2 << ":" << endl;
+        NHAPMATHANG(x);
+        L.count++;
+        L.a[L.count] = x;
+    } while (L.count < 2); // Nh?p ít nh?t 3 ph?n t?
 }
 
-void xuat(TRO &L) {
-    if (L == NULL) {
-        cout << "Danh sach rong!" << endl;
-        return;
-    }
-    TRO Q = L;
-    cout << left << setw(8) << "STT"
-         << left << setw(20) << "Ho dem"
-         << left << setw(20) << "Ten"
-         << left << setw(20) << "Gioi tinh"
-         << left << setw(20) << "Diem tong ket" << endl;
-    int d = 0;
-    while (Q != NULL) {
-        Sinhvien sv = Q->infor;
-        cout << left << setw(8) << d + 1
-             << left << setw(20) << sv.hodem
-             << left << setw(20) << sv.ten
-             << left << setw(20) << sv.gt
-             << left << setw(20) << sv.diemtk << endl;
-        Q = Q->next;
-        d++;
+// Hi?n th? danh sách
+void HIENTHI(List L) {
+    cout << setw(10) << "STT"
+         << setw(15) << "Ma Hang"
+         << setw(20) << "Ten Hang"
+         << setw(10) << "So Luong" << endl;
+
+    for (int i = 0; i <= L.count; i++) {
+        cout << setw(10) << i + 1
+             << setw(15) << L.a[i].maHang
+             << setw(20) << L.a[i].tenHang
+             << setw(10) << L.a[i].soLuong << endl;
     }
 }
 
-TRO tromax(TRO L) {
-    TRO max = L;
-    TRO Q = L->next;
-    while (Q != NULL) {
-        if (Q->infor.diemtk > max->infor.diemtk) {
-            max = Q;
+// Tìm m?t hàng theo tên
+int TIM(List L, char tenCanTim[]) {
+    for (int i = 0; i <= L.count; i++) {
+        if (strcmp(L.a[i].tenHang, tenCanTim) == 0) {
+            cout << "\nMat hang tim thay:\n";
+            cout << setw(10) << "Ma Hang" << setw(20) << "Ten Hang" << setw(10) << "So Luong" << endl;
+            cout << setw(10) << L.a[i].maHang
+                 << setw(20) << L.a[i].tenHang
+                 << setw(10) << L.a[i].soLuong << endl;
+            return i;
         }
-        Q = Q->next;
     }
-    return max;
+    cout << "Khong tim thay mat hang co ten: " << tenCanTim << endl;
+    return -1;
 }
 
-void xoamax(TRO &L) {
-    TRO max = tromax(L);
-    if (max == L) {
-        L = L->next;
-        delete max;
-    } else {
-        TRO Q = L;
-        while (Q->next != max) {
-            Q = Q->next;
-        }
-        Q->next = max->next;
-        delete max;
+// Xóa ph?n t? t?i v? trí k (0-based index)
+void XOA(List &L, int k) {
+    for (int i = k; i < L.count; i++) {
+        L.a[i] = L.a[i + 1];
     }
+    L.count--;
 }
 
-void chenTruocMax(TRO &L) {
-    TRO max = tromax(L);
+// Thêm m?t hàng t?i v? trí k (1-based index)
+void THEM(List &L, int k) {
+    MATHANG x;
+    cout << "\nNhap mat hang can them:\n";
+    NHAPMATHANG(x);
 
-    Sinhvien svmoi;
-    cout << "\nNhap thong tin sinh vien muon chen truoc sinh vien co diem cao nhat:\n";
-    nhapsv(svmoi);
-
-    TRO P = new Node;
-    P->infor = svmoi;
-    P->next = NULL;
-
-    if (L == max) { // chÃ¨n Ä‘áº§u danh sÃ¡ch
-        P->next = L;
-        L = P;
-    } else {
-        TRO Q = L;
-        while (Q->next != max) {
-            Q = Q->next;
-        }
-        P->next = max;
-        Q->next = P;
+    for (int i = L.count + 1; i > k - 1; i--) {
+        L.a[i] = L.a[i - 1];
     }
+    L.a[k] = x;
+    L.count++;
 }
 
 int main() {
-    TRO L; // <-- sá»­a Ä‘Ãºng kiá»ƒu khai bÃ¡o
-    cout << "Nhap thong tin sinh vien" << endl;
-    nhapdsach(L);
+    List L;
+    NHAPDANHSACH(L);
+    cout << "\n=== DANH SACH SAU KHI TAO ===\n";
+    HIENTHI(L);
 
-    cout << "\nDS sinh vien sau khi nhap" << endl;
-    xuat(L);
+    // Tìm và xóa m?t hàng theo tên
+    char tenTim[50];
+    cout << "\nNhap ten mat hang can tim: ";
+    fflush(stdin);
+    gets(tenTim);
 
-    cout << "\nDS sinh vien sau khi xoa diem tk max" << endl;
-    TRO max = tromax(L);
-    cout << "Diem tong ket cao nhat: " << max->infor.diemtk << endl;
+    int vt = TIM(L, tenTim);
+    if (vt != -1) {
+        // Xóa n?u tìm th?y
+        XOA(L, vt);
+        cout << "\n=== DANH SACH SAU KHI XOA ===\n";
+        HIENTHI(L);
+    }
 
-    xoamax(L);
-    xuat(L);
-    
-    cout << "\nDS sinh vien sau khi nhap" << endl;
-	xuat(L);
-	chenTruocMax(L);
-	cout << "\nDS sau khi chen sinh vien truoc diem tong ket cao nhat" << endl;
-	xuat(L);
-
-
+    // Chèn m?t hàng m?i sau ph?n t? th? 1 (t?c v? trí 2 trong m?ng 0-based)
+    cout << "\n=== CHEN MAT HANG MOI SAU PHAN TU THU 1 ===\n";
+    THEM(L, 1); // chèn t?i v? trí 2 (sau ph?n t? d?u)
+    HIENTHI(L);
 
     return 0;
 }
