@@ -1,0 +1,170 @@
+
+#include <bits/stdc++.h>
+using namespace std;
+
+struct Mathang {
+    char ma[10];
+    char ten[30];
+    int soluong;
+};
+
+struct Node {
+    Mathang data;
+    Node* next;
+};
+
+typedef Node* tro;
+
+// Hàm nh?p 1 m?t hàng
+void nhapMathang(Mathang &mh) {
+    cout << "Nhap ma hang: "; fflush(stdin); gets(mh.ma);
+    cout << "Nhap ten mat hang: "; fflush(stdin); gets(mh.ten);
+    cout << "Nhap so luong: "; cin >> mh.soluong;
+}
+
+// T?o danh sách = 3 ph?n t?
+void taoDanhSach(tro &L) {
+    int n = 3; // ho?c cho nh?p n t? ngu?i dùng
+    tro P, Q = NULL;
+    Mathang mh;
+    L = NULL;
+
+    for (int i = 0; i < n; i++) {
+        cout << "\nNhap mat hang thu " << i + 1 << endl;
+        nhapMathang(mh);
+        P = new Node;
+        P->data = mh;
+        P->next = NULL;
+
+        if (L == NULL) L = P;
+        else Q->next = P;
+
+        Q = P;
+    }
+}
+
+// Xu?t danh sách m?t hàng
+void xuatDS(tro L) {
+    if (L == NULL) {
+        cout << "Danh sach rong!\n";
+        return;
+    }
+    int stt = 1;
+    cout << left << setw(5) << "STT"
+         << setw(15) << "Ma hang"
+         << setw(25) << "Ten mat hang"
+         << setw(10) << "So luong" << endl;
+    while (L != NULL) {
+        cout << left << setw(5) << stt++
+             << setw(15) << L->data.ma
+             << setw(25) << L->data.ten
+             << setw(10) << L->data.soluong << endl;
+        L = L->next;
+    }
+}
+
+// Tìm m?t hàng theo tên
+tro timTheoTen(tro L, char* ten) {
+    tro Q = L;
+    while (Q != NULL && strcmp(Q->data.ten, ten) != 0) {
+        Q = Q->next;
+    }
+    return Q;
+}
+
+// Xóa node kh?i danh sách
+void xoaNode(tro &L, tro T) {
+    if (T == NULL) return;
+
+    if (T == L) {
+        L = T->next;
+    } else {
+        tro Q = L;
+        while (Q->next != T) {
+            Q = Q->next;
+        }
+        Q->next = T->next;
+    }
+    delete T;
+}
+
+// Chen vao dau
+void chenDau(tro &L, Mathang mh) {
+    tro P = new Node;
+    P->data = mh;
+    P->next = L;
+    L = P;
+}
+
+// Chen sau vtri t3
+void chenSauViTri3(tro &L, Mathang mh) {
+    tro P = new Node;
+    P->data = mh;
+    P->next = NULL;
+
+    if (L == NULL) {
+        L = P;
+        return;
+    }
+
+    tro Q = L;
+    int dem = 1;
+    while (Q != NULL && dem < 3) {
+        Q = Q->next;
+        dem++;
+    }
+
+    if (Q == NULL) {
+        cout << "Danh sach khong co 3 mat hang, chen vao cuoi.\n";
+        Q = L;
+        while (Q->next != NULL) Q = Q->next;
+        Q->next = P;
+    } else {
+        P->next = Q->next;
+        Q->next = P;
+    }
+}
+
+// ======================= MAIN =======================
+int main() {
+    tro L;
+    cout << "===== Tao danh sach mat hang =====\n";
+    taoDanhSach(L);
+    cout << "\n===== Danh sach vua tao =====\n";
+    xuatDS(L);
+
+    // Tìm m?t hàng theo tên
+    char tenCanTim[30];
+    cout << "\nNhap ten mat hang can tim: ";fflush(stdin);gets(tenCanTim);
+    tro T = timTheoTen(L, tenCanTim);
+    if (T != NULL) {
+        cout << "\nMat hang tim thay:\n";
+cout << "Ma: " << T->data.ma << ", Ten: " << T->data.ten
+             << ", So luong: " << T->data.soluong << endl;
+
+        // Xóa n?u tìm th?y
+        xoaNode(L, T);
+        cout << "\nDanh sach sau khi xoa:\n";
+        xuatDS(L);
+    } else {
+        cout << "Khong tim thay mat hang co ten '" << tenCanTim << "'\n";
+    }
+
+    // Chèn thêm 1 m?t hàng vào d?u danh sách
+    Mathang mhMoi;
+    cout << "\nNhap mat hang moi can chen dau:\n";
+    nhapMathang(mhMoi);
+    chenDau(L, mhMoi);
+
+
+	// Chèn thêm 1 mat hang sau mh t3
+//    Mathang mhMoi;
+//    cout << "\nNhap mat hang moi can chen sau mh thu 3:\n";
+//    nhapMathang(mhMoi);
+//    chenSauViTri3(L, mhMoi);
+
+    cout << "\n===== Danh sach sau khi chen dau =====\n";
+    xuatDS(L);
+
+    return 0;
+}
