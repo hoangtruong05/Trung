@@ -1,0 +1,145 @@
+
+#include<bits/stdc++.h>
+using namespace std;
+
+struct Sinhvien {
+    char hodem[20];
+    char ten[10];
+    char gt[5];
+    float diemtk;
+};
+
+struct Node {
+    Sinhvien infor;
+    Node *next;
+};
+
+typedef Node* TRO;
+
+void nhapsv(Sinhvien &sv) {
+    cout << "Nhap ho dem : "; fflush(stdin); gets(sv.hodem);
+    cout << "Nhap ten : "; fflush(stdin); gets(sv.ten);
+    cout << "Nhap gioi tinh : "; fflush(stdin); gets(sv.gt);
+    cout << "Nhap diem tong ket : "; cin >> sv.diemtk;
+}
+
+void nhapdsach(TRO &L) {
+    Sinhvien sv;
+    TRO P, Q = NULL;
+    int i = 0;
+    L = NULL;
+    do {
+        cout << endl << "Nhap thong tin sinh vien thu " << i + 1 << endl;
+        nhapsv(sv);
+        P = new Node;
+        P->infor = sv;
+        P->next = NULL; // FIXED: gÃ¡n next NULL
+        if (L == NULL) {
+            L = P;
+        } else {
+            Q->next = P;
+        }
+        Q = P;
+        i++;
+    } while (i < 3); // nháº­p 3 sinh viÃªn
+}
+
+void xuat(TRO &L) {
+    if (L == NULL) {
+        cout << "Danh sach rong!" << endl;
+        return;
+    }
+    TRO Q = L;
+    cout << left << setw(8) << "STT"
+         << left << setw(20) << "Ho dem"
+         << left << setw(20) << "Ten"
+         << left << setw(20) << "Gioi tinh"
+         << left << setw(20) << "Diem tong ket" << endl;
+    int d = 0;
+    while (Q != NULL) {
+        Sinhvien sv = Q->infor;
+        cout << left << setw(8) << d + 1
+             << left << setw(20) << sv.hodem
+             << left << setw(20) << sv.ten
+             << left << setw(20) << sv.gt
+             << left << setw(20) << sv.diemtk << endl;
+        Q = Q->next;
+        d++;
+    }
+}
+
+TRO tromax(TRO L) {
+    TRO max = L;
+    TRO Q = L->next;
+    while (Q != NULL) {
+        if (Q->infor.diemtk > max->infor.diemtk) {
+            max = Q;
+        }
+        Q = Q->next;
+    }
+    return max;
+}
+
+void xoamax(TRO &L) {
+    TRO max = tromax(L);
+    if (max == L) {
+        L = L->next;
+        delete max;
+    } else {
+        TRO Q = L;
+        while (Q->next != max) {
+            Q = Q->next;
+        }
+        Q->next = max->next;
+        delete max;
+    }
+}
+
+void chenTruocMax(TRO &L) {
+    TRO max = tromax(L);
+
+    Sinhvien svmoi;
+    cout << "\nNhap thong tin sinh vien muon chen truoc sinh vien co diem cao nhat:\n";
+    nhapsv(svmoi);
+
+    TRO P = new Node;
+    P->infor = svmoi;
+    P->next = NULL;
+
+    if (L == max) { // chÃ¨n Ä‘áº§u danh sÃ¡ch
+        P->next = L;
+        L = P;
+    } else {
+        TRO Q = L;
+        while (Q->next != max) {
+            Q = Q->next;
+        }
+        P->next = max;
+        Q->next = P;
+    }
+}
+
+int main() {
+    TRO L; // <-- sá»­a Ä‘Ãºng kiá»ƒu khai bÃ¡o
+    cout << "Nhap thong tin sinh vien" << endl;
+    nhapdsach(L);
+
+    cout << "\nDS sinh vien sau khi nhap" << endl;
+    xuat(L);
+
+    cout << "\nDS sinh vien sau khi xoa diem tk max" << endl;
+    TRO max = tromax(L);
+    cout << "Diem tong ket cao nhat: " << max->infor.diemtk << endl;
+
+    xoamax(L);
+    xuat(L);
+cout << "\nDS sinh vien sau khi nhap" << endl;
+	xuat(L);
+	chenTruocMax(L);
+	cout << "\nDS sau khi chen sinh vien truoc diem tong ket cao nhat" << endl;
+	xuat(L);
+
+
+
+    return 0;
+}
