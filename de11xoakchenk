@@ -1,0 +1,176 @@
+
+#include <bits/stdc++.h>
+using namespace std;
+
+struct Sach {
+    char loai[20];
+    char ten[50];
+    char tacgia[50];
+    int nam;
+};
+
+struct Node {
+    Sach data;
+    Node* next;
+};
+
+typedef Node* tro;
+
+// Nh?p 1 sách
+void nhapSach(Sach &s) {
+    cout << "Nhap loai sach: "; fflush(stdin); gets(s.loai);
+    cout << "Nhap ten sach: "; gets(s.ten);
+    cout << "Nhap ten tac gia: "; gets(s.tacgia);
+    cout << "Nhap nam xuat ban: "; cin >> s.nam;
+}
+
+// T?o node
+tro taoNode(Sach s) {
+    tro p = new Node;
+    p->data = s;
+    p->next = NULL;
+    return p;
+}
+
+// Thêm vào cu?i
+void themCuoi(tro &L, Sach s) {
+    tro p = taoNode(s);
+    if (L == NULL) L = p;
+    else {
+        tro q = L;
+        while (q->next != NULL) q = q->next;
+        q->next = p;
+    }
+}
+
+// Xu?t danh sách
+void xuatDS(tro L) {
+    int stt = 1;
+    cout << "\nDanh sach sach:\n";
+    cout << left << setw(5) << "STT"
+         << setw(20) << "Loai"
+         << setw(30) << "Ten"
+         << setw(25) << "Tac gia"
+         << setw(10) << "Nam" << endl;
+
+    while (L != NULL) {
+        Sach s = L->data;
+        cout << left << setw(5) << stt++
+             << setw(20) << s.loai
+             << setw(30) << s.ten
+             << setw(25) << s.tacgia
+             << setw(10) << s.nam << endl;
+        L = L->next;
+    }
+}
+
+// Xóa t?i v? trí k
+void xoaTaiViTri(tro &L, int k) {
+    if (L == NULL || k <= 0) return;
+    if (k == 1) {
+        tro temp = L;
+        L = L->next;
+        delete temp;
+        return;
+    }
+    tro p = L;
+    for (int i = 1; p != NULL && i < k - 1; ++i) p = p->next;
+    if (p == NULL || p->next == NULL) return;
+
+    tro temp = p->next;
+    p->next = temp->next;
+    delete temp;
+}
+
+// Chèn t?i v? trí k
+void chenTaiViTri(tro &L, Sach s, int k) {
+    tro p = taoNode(s);
+    if (k <= 1 || L == NULL) {
+        p->next = L;
+        L = p;
+        return;
+    }
+    tro q = L;
+    for (int i = 1; q->next != NULL && i < k - 1; ++i) q = q->next;
+    p->next = q->next;
+    q->next = p;
+}
+
+// Tìm t?t c? sách có tên ch?a “A” ho?c t? khóa khác
+void timTheoTen(tro L, const char* keyword, vector<tro> &ketqua) {
+    while (L != NULL) {
+        if (strstr(L->data.ten, keyword)) {
+            ketqua.push_back(L);
+        }
+        L = L->next;
+    }
+}
+
+// Ð?m s? lu?ng ph?n t? trong danh sách
+int demSL(tro L) {
+    int dem = 0;
+    while (L != NULL) {
+        dem++;
+        L = L->next;
+    }
+    return dem;
+}
+
+// Thay th? node b?ng node m?i
+void thayNode(tro &L, tro oldNode, Sach moi) {
+    if (oldNode == NULL) return;
+    oldNode->data = moi;
+}
+
+int main() {
+    tro L = NULL;
+    int n = 3;
+    Sach s;
+
+    cout << "=== Tao danh sach sach ===\n";
+    for (int i = 0; i < n; ++i) {
+        cout << "\nNhap sach thu " << i+1 << ":\n";
+        nhapSach(s);
+        themCuoi(L, s);
+    }
+
+    xuatDS(L);
+
+    cout << "\n=== Xoa cuon sach o vi tri 2 ===\n";
+    xoaTaiViTri(L, 2);
+    xuatDS(L);
+
+    cout << "\n=== Chen mot sach moi vao vi tri thu 3 ===\n";
+Sach sachChen;
+    nhapSach(sachChen);
+    chenTaiViTri(L, sachChen, 3);
+    xuatDS(L);
+
+    // Tìm theo tên ch?a "A"
+    cout << "\n=== Tim sach co ten chua chu 'A' ===\n";
+    vector<tro> dsTimDuoc;
+    timTheoTen(L, "A", dsTimDuoc);
+
+    if (dsTimDuoc.empty()) {
+        cout << "Khong tim thay sach nao co ten chua 'A'\n";
+    } else {
+        for (tro p : dsTimDuoc) {
+            cout << "\nTim thay: " << p->data.ten << " (" << p->data.tacgia << ")\n";
+        }
+
+        // Nh?p sách có tên "B" d? thay
+        cout << "\nNhap sach moi co ten 'B' de thay the:\n";
+        Sach sachB;
+        nhapSach(sachB);
+
+        // Thay node d?u tiên tìm du?c
+        thayNode(L, dsTimDuoc[0], sachB);
+    }
+
+    cout << "\n=== Danh sach sau khi thay ===\n";
+    xuatDS(L);
+
+    cout << "\nTong so sach trong danh sach: " << demSL(L) << endl;
+
+    return 0;
+}
