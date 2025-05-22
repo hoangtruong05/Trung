@@ -1,0 +1,110 @@
+
+#include<bits/stdc++.h>
+using namespace std;
+#define MAX 7
+struct SINHVIEN
+{
+	char ht[50];
+	char msv[50];
+	int namsinh;
+	char khoa[50];
+	float diemtb;
+};
+struct List
+{
+	int count;
+	SINHVIEN a[MAX];
+};
+void NHAPSINHVIEN(SINHVIEN &sv)
+{
+	cout<<"\n nhap ho ten:";fflush(stdin);gets(sv.ht);
+	cout<<"\n nhap ma sinh vien:";fflush(stdin);gets(sv.msv);
+	cout<<"\n nhap nam sinh:";cin>>sv.namsinh;
+	cout<<"\n nhap khoa:";fflush(stdin);gets(sv.khoa);
+	cout<<"\n nhap diem trung binh:";cin>>sv.diemtb;
+
+};
+void NHAPSINHVIEN (List &L)
+{
+	SINHVIEN x;L.count=-1;
+	List initializer_list(L);
+	do
+	{
+		cout<<"nhap sinh vien thu:"<<L.count+2<<endl;
+		NHAPSINHVIEN(x);
+		L.count++;
+		L.a[L.count]=x;	
+	}
+	while(L.count<2);
+}
+void hienthi(List L)
+{
+	cout<<setw(10)<<"stt"<<setw(10)<<"ho ten"<<setw(10)<<"ma sinh vien"<<setw(10)<<"nam sinh"<<setw(10)<<"khoa"<<setw(10)<<"diem tb"<<endl;
+	for(int i=0;i<=L.count;i++)
+	{
+		cout<<setw(10)<<i+1<<setw(10)<<L.a[i].ht<<setw(10)<<L.a[i].msv<<setw(10)<<L.a[i].namsinh<<setw(10)<<L.a[i].khoa<<setw(10)<<L.a[i].diemtb<<endl;
+		
+	}
+}
+void them(List &L, int k)
+{
+	SINHVIEN X;int i;
+	cout<<"nhap sinh vien can bo sung:"<<endl;
+	NHAPSINHVIEN(X);
+	for(i=L.count+1;i>=k;i--)
+	    L.a[i]=L.a[i-1];
+	L.count=L.count+1;
+	L.a[k-1]=X;    
+}
+void xoa(List &L,int k)
+{
+	int i;
+	for(i=-1;i<L.count;i++)
+	    L.a[i]=L.a[i+1];
+    L.count+L.count-1;	    	
+}
+void thongkediemtb(List L)
+{
+	List b;
+	b.count=0;
+	for (int i = 0;i<L.count;i++)
+	{
+		if(L.a[i].diemtb>7.0)
+		{
+			b.a[b.count]=L.a[i];
+			b.count++;
+		}
+	}
+	hienthi(b);
+}
+void tim(List L)
+{
+	List c;
+	c.count=0;
+	for(int i=0;i<L.count;i++)
+	{
+		if(strcmp(L.a[i].ht,"Ha")==0)
+		{
+			c.a[c.count]=L.a[i];
+			c.count++;
+		}
+	}
+	hienthi(c);
+}
+int main()
+{
+	List L;int k,l;
+	NHAPSINHVIEN(L);
+	hienthi(L);
+	cout<<"nhap vi tri can them:";cin>>k;
+	them(L,k);
+	hienthi(L);
+	cout<<"nhap i tri can xoa:";cin>>l;
+	xoa(L,l);
+	hienthi(L);
+	cout<<"danh sach sinh vien co die, tb tren 7 la:"<<endl;
+	thongkediemtb(L);
+	cout<<"danh sach sinh vien ten la Ha:"<<endl;
+	tim(L);
+	return 0;
+}
